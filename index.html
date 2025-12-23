@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>WarPig Telemetry</title>
+  <style>
+    body {
+      background: #000;
+      color: #0f0;
+      font-family: monospace;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    .item {
+      margin: 6px 0;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🐗 WarPig Telemetry</h1>
+
+<div class="item">Version: <span id="version">-</span></div>
+<div class="item">IP: <span id="ip">-</span></div>
+<div class="item">Uptime: <span id="uptime">-</span></div>
+<div class="item">CPU: <span id="cpu">-</span>%</div>
+
+<hr>
+
+<div class="item">WiFi (current): <span id="wifi_now">-</span></div>
+<div class="item">WiFi (total): <span id="wifi_total">-</span></div>
+
+<div class="item">Bluetooth (current): <span id="bt_now">-</span></div>
+<div class="item">Bluetooth (total): <span id="bt_total">-</span></div>
+
+<script>
+async function update() {
+  try {
+    const r = await fetch("http://localhost:7070/status");
+    const d = await r.json();
+
+    version.textContent = d.version;
+    ip.textContent = d.ip;
+    uptime.textContent = d.uptime;
+    cpu.textContent = d.cpu;
+
+    wifi_now.textContent = d.wifi_now;
+    wifi_total.textContent = d.wifi_total;
+    bt_now.textContent = d.bt_now;
+    bt_total.textContent = d.bt_total;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+setInterval(update, 1000);
+update();
+</script>
+
+</body>
+</html>
