@@ -38,23 +38,25 @@
 <script>
 async function update() {
   try {
-    const r = await fetch("http://localhost:7070/status");
-    const d = await r.json();
+    // Make sure this points to your Python web server port
+    const response = await fetch("http://localhost:8081/status");
+    const data = await response.json();
 
-    version.textContent = d.version;
-    ip.textContent = d.ip;
-    uptime.textContent = d.uptime;
-    cpu.textContent = d.cpu;
+    document.getElementById("version").textContent = data.version;
+    document.getElementById("ip").textContent = data.ip;
+    document.getElementById("uptime").textContent = data.uptime;
+    document.getElementById("cpu").textContent = data.cpu;
 
-    wifi_now.textContent = d.wifi_now;
-    wifi_total.textContent = d.wifi_total;
-    bt_now.textContent = d.bt_now;
-    bt_total.textContent = d.bt_total;
-  } catch (e) {
-    console.error(e);
+    document.getElementById("wifi_now").textContent = data.wifi_now;
+    document.getElementById("wifi_total").textContent = data.wifi_total;
+    document.getElementById("bt_now").textContent = data.bt_now;
+    document.getElementById("bt_total").textContent = data.bt_total;
+  } catch (err) {
+    console.error("Failed to fetch telemetry:", err);
   }
 }
 
+// Update every second
 setInterval(update, 1000);
 update();
 </script>
