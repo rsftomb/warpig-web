@@ -36,9 +36,8 @@
 <div class="item">Bluetooth (total): <span id="bt_total">-</span></div>
 
 <script>
-async function update() {
+async function updateTelemetry() {
   try {
-    // Make sure this points to your Python web server port
     const response = await fetch("http://localhost:8081/status");
     const data = await response.json();
 
@@ -56,9 +55,9 @@ async function update() {
   }
 }
 
-// Update every second
-setInterval(update, 1000);
-update();
+// Refresh every second
+setInterval(updateTelemetry, 1000);
+updateTelemetry();
 </script>
 
 </body>
