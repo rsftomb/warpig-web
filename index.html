@@ -4,45 +4,76 @@
   <meta charset="utf-8">
   <title>🐗 WarPi.G WebUI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
       background: #000;
       color: #0f0;
       font-family: monospace;
       margin: 0;
-      padding-top: 60px;  /* header */
-      padding-bottom: 60px; /* footer */
+      padding-top: 100px;
+      padding-bottom: 60px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
+    /* ===== Header ===== */
     header.header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      padding: 10px 0;
       background: #000;
       border-bottom: 1px solid #0f0;
-      color: #0f0;
       text-align: center;
-      font-size: 18px;
+      padding: 6px 0;
+      z-index: 10;
     }
 
     .subtitle {
-      display: block;
-      font-size: 12px;
+      font-size: 11px;
       color: #0a0;
       font-style: italic;
     }
 
+    /* ===== Tabs ===== */
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 8px;
+      border-top: 1px solid #0f0;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 8px 0;
+      cursor: pointer;
+      border-right: 1px solid #0f0;
+      font-size: 13px;
+    }
+
+    .tab:last-child {
+      border-right: none;
+    }
+
+    .tab.active {
+      background: #0f0;
+      color: #000;
+      font-weight: bold;
+    }
+
+    /* ===== Content ===== */
     .content {
       width: 90%;
-      max-width: 400px;
-      display: flex;
+      max-width: 420px;
+      display: none;
       flex-direction: column;
       gap: 8px;
+    }
+
+    .content.active {
+      display: flex;
     }
 
     .item {
@@ -52,8 +83,13 @@
       font-size: 14px;
     }
 
+    .item svg {
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
     .sublist {
-      max-height: 80px;
+      max-height: 120px;
       overflow-y: auto;
       padding-left: 8px;
       border-left: 1px solid #0f0;
@@ -70,81 +106,116 @@
     }
 
     hr {
-      width: 100%;
       border: 0;
       border-top: 1px solid #0f0;
-      margin: 10px 0;
     }
 
+    /* ===== Footer ===== */
     footer.footer {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      padding: 8px 0;
+      padding: 6px 0;
       background: #000;
       border-top: 1px solid #0f0;
-      color: #0f0;
-      font-size: 12px;
+      font-size: 11px;
       text-align: center;
     }
 
     .disclaimer {
       display: block;
-      margin-top: 4px;
       font-size: 10px;
       color: #0a0;
       font-style: italic;
     }
   </style>
 </head>
+
 <body>
 
 <header class="header">
   🐗 WarPi.G WebUI
-  <span class="subtitle">WarPi.G Wardriving Dashboard</span>
+  <div class="subtitle">Wardriving Dashboard</div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('dashboard')">Dashboard</div>
+    <div class="tab" onclick="showTab('wifi')">WiFi</div>
+    <div class="tab" onclick="showTab('bluetooth')">Bluetooth</div>
+  </div>
 </header>
 
-<div class="content">
+<!-- ===== DASHBOARD ===== -->
+<div id="dashboard" class="content active">
   <div class="item">Build#: <span id="version">-</span></div>
   <div class="item">IP: <span id="ip">-</span></div>
   <div class="item">Uptime: <span id="uptime">-</span></div>
-  <div class="item">CPU: <span id="cpu">-</span>%</div>
+
+  <div class="item">
+    <span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#0f0">
+        <path d="M9 2H15V4H18V6H20V8H22V16H20V18H18V20H15V22H9V20H6V18H4V16H2V8H4V6H6V4H9V2ZM10 10H14V14H10V10Z"/>
+      </svg>
+      CPU
+    </span>
+    <span id="cpu">-</span>%
+  </div>
 
   <hr>
 
   <div class="item">WiFi (current): <span id="wifi_now">-</span></div>
+  <div class="item">Bluetooth (current): <span id="bt_now">-</span></div>
+</div>
+
+<!-- ===== WIFI ===== -->
+<div id="wifi" class="content">
+  <div class="item">WiFi (current): <span id="wifi_now_w">-</span></div>
   <div class="item">WiFi (total): <span id="wifi_total">-</span></div>
   <div class="sublist" id="wifi_list">SSIDs: -</div>
+</div>
 
-  <div class="item">Bluetooth (current): <span id="bt_now">-</span></div>
+<!-- ===== BLUETOOTH ===== -->
+<div id="bluetooth" class="content">
+  <div class="item">Bluetooth (current): <span id="bt_now_b">-</span></div>
   <div class="item">Bluetooth (total): <span id="bt_total">-</span></div>
   <div class="sublist" id="bt_list">Devices: -</div>
 </div>
 
 <script>
+function showTab(id) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
 async function updateTelemetry() {
   try {
-    const response = await fetch("http://192.168.0.125:8081/status");
-    const data = await response.json();
+    const r = await fetch("http://192.168.0.125:8081/status");
+    const d = await r.json();
 
-    document.getElementById("version").textContent = data.version;
-    document.getElementById("ip").textContent = data.ip;
-    document.getElementById("uptime").textContent = data.uptime;
-    document.getElementById("cpu").textContent = data.cpu;
+    version.textContent = d.version;
+    ip.textContent = d.ip;
+    uptime.textContent = d.uptime;
+    cpu.textContent = d.cpu;
 
-    document.getElementById("wifi_now").textContent = data.wifi_now;
-    document.getElementById("wifi_total").textContent = data.wifi_total;
-    document.getElementById("bt_now").textContent = data.bt_now;
-    document.getElementById("bt_total").textContent = data.bt_total;
+    wifi_now.textContent = d.wifi_now;
+    wifi_now_w.textContent = d.wifi_now;
+    wifi_total.textContent = d.wifi_total;
 
-    document.getElementById("wifi_list").textContent =
-      "SSIDs: " + (data.wifi_seen.length ? data.wifi_seen.join(", ") : "-");
-    document.getElementById("bt_list").textContent =
-      "Devices: " + (data.bt_seen.length ? data.bt_seen.join(", ") : "-");
+    bt_now.textContent = d.bt_now;
+    bt_now_b.textContent = d.bt_now;
+    bt_total.textContent = d.bt_total;
 
-  } catch (err) {
-    console.error("Failed to fetch telemetry:", err);
+    wifi_list.textContent =
+      d.wifi_seen?.length ? d.wifi_seen.join("\n") : "-";
+
+    bt_list.textContent =
+      d.bt_seen?.length ? d.bt_seen.join("\n") : "-";
+
+  } catch (e) {
+    console.error(e);
   }
 }
 
@@ -153,8 +224,8 @@ updateTelemetry();
 </script>
 
 <footer class="footer">
-  &copy; 2025-2026 WarPi.G Zero2W
-  <span class="disclaimer">Disclaimer: Data is for legal monitoring purposes only. Use at your own risk.</span>
+  &copy; 2025–2026 WarPi.G Zero2W
+  <span class="disclaimer">Legal monitoring only. Use at your own risk.</span>
 </footer>
 
 </body>
