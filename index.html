@@ -47,15 +47,26 @@
 
     .item {
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
       font-size: 14px;
     }
 
-    .item svg {
-      margin-right: 4px;
-      vertical-align: middle;
+    .sublist {
+      max-height: 80px;
+      overflow-y: auto;
+      padding-left: 8px;
+      border-left: 1px solid #0f0;
+      font-size: 12px;
+    }
+
+    .sublist::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sublist::-webkit-scrollbar-thumb {
+      background: #0a0;
+      border-radius: 3px;
     }
 
     hr {
@@ -95,18 +106,20 @@
 </header>
 
 <div class="content">
-  
   <div class="item">Build#: <span id="version">-</span></div>
   <div class="item">IP: <span id="ip">-</span></div>
   <div class="item">Uptime: <span id="uptime">-</span></div>
   <div class="item">CPU: <span id="cpu">-</span>%</div>
 
+  <hr>
 
-  <div class="item">WiFi <span>(current): <span id="wifi_now">-</span></span></div>
-  <div class="item">WiFi <span>(total): <span id="wifi_total">-</span></span></div>
+  <div class="item">WiFi (current): <span id="wifi_now">-</span></div>
+  <div class="item">WiFi (total): <span id="wifi_total">-</span></div>
+  <div class="sublist" id="wifi_list">SSIDs: -</div>
 
-  <div class="item">Bluetooth <span>(current): <span id="bt_now">-</span></span></div>
-  <div class="item">Bluetooth <span>(total): <span id="bt_total">-</span></span></div>
+  <div class="item">Bluetooth (current): <span id="bt_now">-</span></div>
+  <div class="item">Bluetooth (total): <span id="bt_total">-</span></div>
+  <div class="sublist" id="bt_list">Devices: -</div>
 </div>
 
 <script>
@@ -124,6 +137,12 @@ async function updateTelemetry() {
     document.getElementById("wifi_total").textContent = data.wifi_total;
     document.getElementById("bt_now").textContent = data.bt_now;
     document.getElementById("bt_total").textContent = data.bt_total;
+
+    document.getElementById("wifi_list").textContent =
+      "SSIDs: " + (data.wifi_seen.length ? data.wifi_seen.join(", ") : "-");
+    document.getElementById("bt_list").textContent =
+      "Devices: " + (data.bt_seen.length ? data.bt_seen.join(", ") : "-");
+
   } catch (err) {
     console.error("Failed to fetch telemetry:", err);
   }
@@ -140,7 +159,3 @@ updateTelemetry();
 
 </body>
 </html>
-
-
-
-
