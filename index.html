@@ -79,9 +79,38 @@ async function updateTelemetry() {
 setInterval(updateTelemetry, 1000);
 updateTelemetry();
 </script>
+<footer class="footer">
+  &copy; 2025-2026 WarPi.G Zero2W
+  <span class="disclaimer">Disclaimer: Data is for legal monitoring purposes only. Use at your own risk.</span>
+</footer>
 
+<style>
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 8px 0;
+    background: #000;
+    border-top: 1px solid #0f0;
+    color: #0f0;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .disclaimer {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+    color: #0a0;
+    font-style: italic;
+  }
+</style>
+
+  
 </body>
 </html>
+
 
 
 
