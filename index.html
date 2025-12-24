@@ -40,8 +40,8 @@
     .content {
       width: 90%;
       max-width: 400px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 8px;
     }
 
@@ -50,23 +50,27 @@
       justify-content: space-between;
       align-items: center;
       font-size: 14px;
-      flex-wrap: wrap;
-    }
-
-    .item svg {
-      margin-right: 4px;
-      vertical-align: middle;
     }
 
     .sublist {
-      grid-column: span 2;
-      margin: 0 0 8px 16px;
+      max-height: 80px;
+      overflow-y: auto;
+      padding-left: 8px;
+      border-left: 1px solid #0f0;
       font-size: 12px;
-      color: #0a0;
+    }
+
+    .sublist::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sublist::-webkit-scrollbar-thumb {
+      background: #0a0;
+      border-radius: 3px;
     }
 
     hr {
-      grid-column: span 2;
+      width: 100%;
       border: 0;
       border-top: 1px solid #0f0;
       margin: 10px 0;
@@ -92,24 +96,6 @@
       color: #0a0;
       font-style: italic;
     }
-
-    .dot {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-left: 4px;
-    }
-
-    .active {
-      background: #0f0;
-    }
-
-    @media(max-width: 350px) {
-      .content {
-        grid-template-columns: 1fr;
-      }
-    }
   </style>
 </head>
 <body>
@@ -120,47 +106,20 @@
 </header>
 
 <div class="content">
-  <div class="item"><span>Build#:</span> <span id="version">-</span></div>
-  <div class="item"><span>IP:</span> <span id="ip">-</span></div>
-  <div class="item"><span>Uptime:</span> <span id="uptime">-</span></div>
-  <div class="item"><span>CPU:</span> <span id="cpu">-</span>%</div>
+  <div class="item">Build#: <span id="version">-</span></div>
+  <div class="item">IP: <span id="ip">-</span></div>
+  <div class="item">Uptime: <span id="uptime">-</span></div>
+  <div class="item">CPU: <span id="cpu">-</span>%</div>
 
   <hr>
 
-  <div class="item">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="#0f0">
-      <path d="M12 18c.828 0 1.5.672 1.5 1.5S12.828 21 12 21s-1.5-.672-1.5-1.5S11.172 18 12 18zm6.364-3.364a9 9 0 00-12.728 0l1.414 1.414a7 7 0 0110.9 0l1.414-1.414zm-3.536-3.536a5 5 0 00-7.072 0l1.414 1.414a3 3 0 014.244 0l1.414-1.414z"/>
-    </svg>
-    <span>WiFi (current):</span> <span id="wifi_now">-</span>
-    <span class="dot" id="wifi_dot"></span>
-  </div>
-
-  <div class="item">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="#0f0">
-      <path d="M12 18c.828 0 1.5.672 1.5 1.5S12.828 21 12 21s-1.5-.672-1.5-1.5S11.172 18 12 18zm6.364-3.364a9 9 0 00-12.728 0l1.414 1.414a7 7 0 0110.9 0l1.414-1.414zm-3.536-3.536a5 5 0 00-7.072 0l1.414 1.414a3 3 0 014.244 0l1.414-1.414z"/>
-    </svg>
-    <span>WiFi (total):</span> <span id="wifi_total">-</span>
-  </div>
-
+  <div class="item">WiFi (current): <span id="wifi_now">-</span></div>
+  <div class="item">WiFi (total): <span id="wifi_total">-</span></div>
   <div class="sublist" id="wifi_list">SSIDs: -</div>
 
-  <div class="item">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="#0f0">
-      <path d="M12 0v24l6-6-4-4 4-4-6-6zm1 6.414L14.586 8 13 9.586V6.414zM13 14.414V11.586L14.586 13 13 14.414z"/>
-    </svg>
-    <span>Bluetooth (current):</span> <span id="bt_now">-</span>
-    <span class="dot" id="bt_dot"></span>
-  </div>
-
-  <div class="item">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="#0f0">
-      <path d="M12 0v24l6-6-4-4 4-4-6-6zm1 6.414L14.586 8 13 9.586V6.414zM13 14.414V11.586L14.586 13 13 14.414z"/>
-    </svg>
-    <span>Bluetooth (total):</span> <span id="bt_total">-</span>
-  </div>
-
+  <div class="item">Bluetooth (current): <span id="bt_now">-</span></div>
+  <div class="item">Bluetooth (total): <span id="bt_total">-</span></div>
   <div class="sublist" id="bt_list">Devices: -</div>
-
 </div>
 
 <script>
@@ -179,12 +138,10 @@ async function updateTelemetry() {
     document.getElementById("bt_now").textContent = data.bt_now;
     document.getElementById("bt_total").textContent = data.bt_total;
 
-    document.getElementById("wifi_list").textContent = "SSIDs: " + (data.wifi_seen.length ? data.wifi_seen.join(", ") : "-");
-    document.getElementById("bt_list").textContent = "Devices: " + (data.bt_seen.length ? data.bt_seen.join(", ") : "-");
-
-    // Live dot indicators
-    document.getElementById("wifi_dot").className = data.wifi_now ? "dot active" : "dot";
-    document.getElementById("bt_dot").className = data.bt_now ? "dot active" : "dot";
+    document.getElementById("wifi_list").textContent =
+      "SSIDs: " + (data.wifi_seen.length ? data.wifi_seen.join(", ") : "-");
+    document.getElementById("bt_list").textContent =
+      "Devices: " + (data.bt_seen.length ? data.bt_seen.join(", ") : "-");
 
   } catch (err) {
     console.error("Failed to fetch telemetry:", err);
