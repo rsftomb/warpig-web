@@ -38,7 +38,7 @@
 <script>
 async function updateTelemetry() {
   try {
-    const response = await fetch("/status");
+    const response = await fetch("http://192.168.0.125:8081/status");
     const data = await response.json();
 
     document.getElementById("version").textContent = data.version;
@@ -62,4 +62,5 @@ updateTelemetry();
 
 </body>
 </html>
+
 
