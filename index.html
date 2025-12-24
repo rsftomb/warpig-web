@@ -3,18 +3,87 @@
 <head>
   <meta charset="utf-8">
   <title>🐗 WarPi.G WebUI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       background: #000;
       color: #0f0;
       font-family: monospace;
-      padding: 20px;
+      margin: 0;
+      padding-top: 60px;  /* header */
+      padding-bottom: 60px; /* footer */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    h1 {
-      margin-bottom: 10px;
+
+    header.header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 10px 0;
+      background: #000;
+      border-bottom: 1px solid #0f0;
+      color: #0f0;
+      text-align: center;
+      font-size: 18px;
     }
+
+    .subtitle {
+      display: block;
+      font-size: 12px;
+      color: #0a0;
+      font-style: italic;
+    }
+
+    .content {
+      width: 90%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
     .item {
-      margin: 6px 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .item svg {
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+
+    hr {
+      width: 100%;
+      border: 0;
+      border-top: 1px solid #0f0;
+      margin: 10px 0;
+    }
+
+    footer.footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 8px 0;
+      background: #000;
+      border-top: 1px solid #0f0;
+      color: #0f0;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .disclaimer {
+      display: block;
+      margin-top: 4px;
+      font-size: 10px;
+      color: #0a0;
+      font-style: italic;
     }
   </style>
 </head>
@@ -25,68 +94,20 @@
   <span class="subtitle">Real-time WiFi & Bluetooth Monitoring</span>
 </header>
 
-<style>
-  .header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 10px 0;
-    background: #000;
-    border-bottom: 1px solid #0f0;
-    color: #0f0;
-    font-size: 16px;
-    text-align: center;
-    font-family: monospace;
-  }
+<div class="content">
+  <div class="item">Build#: <span id="version">-</span></div>
+  <div class="item">IP: <span id="ip">-</span></div>
+  <div class="item">Uptime: <span id="uptime">-</span></div>
+  <div class="item">CPU: <span id="cpu">-</span>%</div>
 
-  .subtitle {
-    display: block;
-    margin-top: 2px;
-    font-size: 12px;
-    color: #0a0;
-    font-style: italic;
-  }
+  <hr>
 
-  body {
-    padding-top: 50px; /* so content doesn’t overlap header */
-    padding-bottom: 40px; /* so content doesn’t overlap footer */
-  }
-</style>
+  <div class="item">WiFi <span>(current): <span id="wifi_now">-</span></span></div>
+  <div class="item">WiFi <span>(total): <span id="wifi_total">-</span></span></div>
 
-
-<div class="item">Build#: <span id="version">-</span></div>
-<div class="item">IP: <span id="ip">-</span></div>
-<div class="item">Uptime: <span id="uptime">-</span></div>
-<div class="item">CPU: <span id="cpu">-</span>%</div>
-
-<hr>
-<div class="item">
-  WiFi <svg width="16" height="16" viewBox="0 0 24 24" fill="#0f0" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 18c.828 0 1.5.672 1.5 1.5S12.828 21 12 21s-1.5-.672-1.5-1.5S11.172 18 12 18zm6.364-3.364a9 9 0 00-12.728 0l1.414 1.414a7 7 0 0110.9 0l1.414-1.414zm-3.536-3.536a5 5 0 00-7.072 0l1.414 1.414a3 3 0 014.244 0l1.414-1.414z"/>
-  </svg>
-  (current): <span id="wifi_now">-</span>
+  <div class="item">Bluetooth <span>(current): <span id="bt_now">-</span></span></div>
+  <div class="item">Bluetooth <span>(total): <span id="bt_total">-</span></span></div>
 </div>
-<div class="item">
-  WiFi <svg width="16" height="16" viewBox="0 0 24 24" fill="#0f0" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 18c.828 0 1.5.672 1.5 1.5S12.828 21 12 21s-1.5-.672-1.5-1.5S11.172 18 12 18zm6.364-3.364a9 9 0 00-12.728 0l1.414 1.414a7 7 0 0110.9 0l1.414-1.414zm-3.536-3.536a5 5 0 00-7.072 0l1.414 1.414a3 3 0 014.244 0l1.414-1.414z"/>
-  </svg>
-  (total): <span id="wifi_total">-</span>
-</div>
-
-<div class="item">
-  Bluetooth <svg width="16" height="16" viewBox="0 0 24 24" fill="#0f0" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 0v24l6-6-4-4 4-4-6-6zm1 6.414L14.586 8 13 9.586V6.414zM13 14.414V11.586L14.586 13 13 14.414z"/>
-  </svg>
-  (current): <span id="bt_now">-</span>
-</div>
-<div class="item">
-  Bluetooth <svg width="16" height="16" viewBox="0 0 24 24" fill="#0f0" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 0v24l6-6-4-4 4-4-6-6zm1 6.414L14.586 8 13 9.586V6.414zM13 14.414V11.586L14.586 13 13 14.414z"/>
-  </svg>
-  (total): <span id="bt_total">-</span>
-</div>
-
 
 <script>
 async function updateTelemetry() {
@@ -108,47 +129,14 @@ async function updateTelemetry() {
   }
 }
 
-// Refresh every second
 setInterval(updateTelemetry, 1000);
 updateTelemetry();
 </script>
+
 <footer class="footer">
   &copy; 2025-2026 WarPi.G Zero2W
   <span class="disclaimer">Disclaimer: Data is for legal monitoring purposes only. Use at your own risk.</span>
 </footer>
 
-<style>
-  .footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 8px 0;
-    background: #000;
-    border-top: 1px solid #0f0;
-    color: #0f0;
-    font-size: 12px;
-    text-align: center;
-  }
-
-  .disclaimer {
-    display: block;
-    margin-top: 4px;
-    font-size: 10px;
-    color: #0a0;
-    font-style: italic;
-  }
-</style>
-
-  
 </body>
 </html>
-
-
-
-
-
-
-
-
-
