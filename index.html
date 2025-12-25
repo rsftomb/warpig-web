@@ -18,7 +18,6 @@
       align-items: center;
     }
 
-    /* ===== Header ===== */
     header.header {
       position: fixed;
       top: 0;
@@ -33,19 +32,13 @@
 
     .logo {
       height: 40px;
-      width: auto;
       display: block;
       margin: 4px auto 2px;
       filter: drop-shadow(0 0 4px #0f0);
     }
 
-    .subtitle {
-      font-size: 11px;
-      color: #0a0;
-      font-style: italic;
-    }
+    .subtitle { font-size: 11px; color: #0a0; font-style: italic; }
 
-    /* ===== Tabs ===== */
     .tabs {
       display: flex;
       justify-content: space-around;
@@ -61,39 +54,25 @@
       font-size: 13px;
     }
 
-    .tab:last-child {
-      border-right: none;
-    }
+    .tab:last-child { border-right: none; }
+    .tab.active { background: #0f0; color: #000; font-weight: bold; }
 
-    .tab.active {
-      background: #0f0;
-      color: #000;
-      font-weight: bold;
-    }
-
-    /* ===== Content ===== */
     .content {
       width: 90%;
       max-width: 420px;
       display: none;
       flex-direction: column;
       gap: 8px;
+      align-items: center;
     }
-
-    .content.active {
-      display: flex;
-    }
+    .content.active { display: flex; }
 
     .item {
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 14px;
-    }
-
-    .item svg {
-      margin-right: 4px;
-      vertical-align: middle;
+      width: 100%;
     }
 
     .sublist {
@@ -103,23 +82,14 @@
       border-left: 1px solid #0f0;
       font-size: 12px;
       white-space: pre-line;
+      width: 100%;
     }
 
-    .sublist::-webkit-scrollbar {
-      width: 6px;
-    }
+    .sublist::-webkit-scrollbar { width: 6px; }
+    .sublist::-webkit-scrollbar-thumb { background: #0a0; border-radius: 3px; }
 
-    .sublist::-webkit-scrollbar-thumb {
-      background: #0a0;
-      border-radius: 3px;
-    }
+    hr { border: 0; border-top: 1px solid #0f0; width: 100%; }
 
-    hr {
-      border: 0;
-      border-top: 1px solid #0f0;
-    }
-
-    /* ===== Footer ===== */
     footer.footer {
       position: fixed;
       bottom: 0;
@@ -132,20 +102,20 @@
       text-align: center;
     }
 
-    .disclaimer {
-      display: block;
-      font-size: 10px;
-      color: #0a0;
-      font-style: italic;
+    .disclaimer { display: block; font-size: 10px; color: #0a0; font-style: italic; }
+
+    canvas.radar {
+      background: #000;
+      border: 1px solid #0f0;
+      border-radius: 50%;
+      margin:16px 0;
     }
   </style>
 </head>
 
 <body>
-
 <header class="header">
   <img src="logo.svg" class="logo" alt="WarPi.G Logo">
-
   🐗 WarPi.G WebUI
   <div class="subtitle">Wardriving Dashboard</div>
 
@@ -156,8 +126,10 @@
   </div>
 </header>
 
-<!-- ===== DASHBOARD ===== -->
+<!-- DASHBOARD -->
 <div id="dashboard" class="content active">
+  <canvas id="radar_dashboard" class="radar" width="200" height="200"></canvas>
+
   <div class="item">Build#: <span id="version">-</span></div>
   <div class="item">IP: <span id="ip">-</span></div>
   <div class="item">Uptime: <span id="uptime">-</span></div>
@@ -173,23 +145,26 @@
   </div>
 
   <hr>
-
   <div class="item">WiFi (current): <span id="wifi_now">-</span></div>
   <div class="item">Bluetooth (current): <span id="bt_now">-</span></div>
 </div>
 
-<!-- ===== WIFI ===== -->
+<!-- WIFI -->
 <div id="wifi" class="content">
+  <canvas id="radar_wifi" class="radar" width="200" height="200"></canvas>
   <div class="item">WiFi (current): <span id="wifi_now_w">-</span></div>
+  <div class="sublist" id="wifi_current_list">Currently seen: -</div>
   <div class="item">WiFi (total): <span id="wifi_total">-</span></div>
-  <div class="sublist" id="wifi_list">SSIDs: -</div>
+  <div class="sublist" id="wifi_list">All seen: -</div>
 </div>
 
-<!-- ===== BLUETOOTH ===== -->
+<!-- BLUETOOTH -->
 <div id="bluetooth" class="content">
+  <canvas id="radar_bt" class="radar" width="200" height="200"></canvas>
   <div class="item">Bluetooth (current): <span id="bt_now_b">-</span></div>
+  <div class="sublist" id="bt_current_list">Currently seen: -</div>
   <div class="item">Bluetooth (total): <span id="bt_total">-</span></div>
-  <div class="sublist" id="bt_list">Devices: -</div>
+  <div class="sublist" id="bt_list">All seen: -</div>
 </div>
 
 <script>
@@ -200,37 +175,131 @@ function showTab(id) {
   event.target.classList.add('active');
 }
 
+// ===== Telemetry =====
+let wifiDevices = [];
+let btDevices = [];
+
+function populateDevices(wifiList, btList){
+  wifiList?.forEach(name=>{
+    if(!wifiDevices.some(d=>d.name===name)){
+      wifiDevices.push({ name, angle: Math.random()*2*Math.PI, radius: Math.random(), alpha: 0 });
+    }
+  });
+  btList?.forEach(name=>{
+    if(!btDevices.some(d=>d.name===name)){
+      btDevices.push({ name, angle: Math.random()*2*Math.PI, radius: Math.random(), alpha: 0 });
+    }
+  });
+}
+
 async function updateTelemetry() {
   try {
     const r = await fetch("http://192.168.0.125:8081/status");
     const d = await r.json();
 
-    version.textContent = d.version;
-    ip.textContent = d.ip;
-    uptime.textContent = d.uptime;
-    cpu.textContent = d.cpu;
+    // Dashboard
+    version.textContent = d.version ?? '-';
+    ip.textContent = d.ip ?? '-';
+    uptime.textContent = d.uptime ?? '-';
+    cpu.textContent = d.cpu ?? '-';
+    wifi_now.textContent = d.wifi_now ?? '-';
+    bt_now.textContent = d.bt_now ?? '-';
 
-    wifi_now.textContent = d.wifi_now;
-    wifi_now_w.textContent = d.wifi_now;
-    wifi_total.textContent = d.wifi_total;
+    // WiFi
+    if(document.getElementById("wifi_now_w")) document.getElementById("wifi_now_w").textContent = d.wifi_now ?? '-';
+    if(document.getElementById("wifi_total")) document.getElementById("wifi_total").textContent = d.wifi_total ?? '-';
+    if(document.getElementById("wifi_list")) document.getElementById("wifi_list").textContent = d.wifi_seen?.length ? d.wifi_seen.join("\n") : "-";
 
-    bt_now.textContent = d.bt_now;
-    bt_now_b.textContent = d.bt_now;
-    bt_total.textContent = d.bt_total;
+    // Bluetooth
+    if(document.getElementById("bt_now_b")) document.getElementById("bt_now_b").textContent = d.bt_now ?? '-';
+    if(document.getElementById("bt_total")) document.getElementById("bt_total").textContent = d.bt_total ?? '-';
+    if(document.getElementById("bt_list")) document.getElementById("bt_list").textContent = d.bt_seen?.length ? d.bt_seen.join("\n") : "-";
 
-    wifi_list.textContent =
-      d.wifi_seen?.length ? d.wifi_seen.join("\n") : "-";
-
-    bt_list.textContent =
-      d.bt_seen?.length ? d.bt_seen.join("\n") : "-";
-
-  } catch (e) {
-    console.error(e);
-  }
+    populateDevices(d.wifi_seen, d.bt_seen);
+  } catch(e){ console.error(e); }
 }
 
 setInterval(updateTelemetry, 1000);
 updateTelemetry();
+
+// ===== Radar =====
+function createRadar(canvas, devices, blipColor, currentListElem){
+  const ctx = canvas.getContext("2d");
+  const radius = canvas.width/2 - 10;
+  let sweep = 0;
+  const speed = 2*Math.PI / (6.5*60); // 6.5 sec rotation
+  let sweepProgress = 0;
+  let sweepCurrentDevices = [];
+
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    // Circles
+    ctx.strokeStyle="#0f0"; ctx.lineWidth=1;
+    for(let i=1;i<=3;i++){
+      ctx.beginPath();
+      ctx.arc(canvas.width/2, canvas.height/2, (radius/3)*i, 0, 2*Math.PI);
+      ctx.stroke();
+    }
+
+    // Cross
+    ctx.beginPath();
+    ctx.moveTo(canvas.width/2,0); ctx.lineTo(canvas.width/2,canvas.height);
+    ctx.moveTo(0,canvas.height/2); ctx.lineTo(canvas.width,canvas.height/2);
+    ctx.stroke();
+
+    // Sweep
+    ctx.strokeStyle="rgba(0,255,0,0.6)"; ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(canvas.width/2,canvas.height/2);
+    ctx.lineTo(canvas.width/2 + radius*Math.cos(sweep), canvas.height/2 + radius*Math.sin(sweep));
+    ctx.stroke();
+
+    // Blips & track devices seen during this sweep
+    devices.forEach(d=>{
+      const delta = (d.angle - sweep + 2*Math.PI) % (2*Math.PI);
+      if(delta < speed*2){
+        d.alpha = 1;
+        if(!sweepCurrentDevices.includes(d.name)) sweepCurrentDevices.push(d.name);
+      }
+      if(d.alpha>0){
+        ctx.fillStyle = blipColor.replace('ALPHA', d.alpha);
+        ctx.beginPath();
+        ctx.arc(canvas.width/2 + d.radius*radius*Math.cos(d.angle),
+                canvas.height/2 + d.radius*radius*Math.sin(d.angle),
+                3,0,2*Math.PI);
+        ctx.fill();
+        d.alpha = Math.max(d.alpha-0.01,0);
+      }
+    });
+
+    // Update current list
+    if(currentListElem) currentListElem.textContent = sweepCurrentDevices.length ? sweepCurrentDevices.join("\n") : "-";
+
+    sweep += speed;
+    sweepProgress += speed;
+    if(sweep>2*Math.PI) sweep=0;
+
+    // Clear current list after full sweep
+    if(sweepProgress >= 2*Math.PI){
+      sweepProgress = 0;
+      sweepCurrentDevices = [];
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+// Dashboard radar (WiFi + BT)
+createRadar(document.getElementById("radar_dashboard"), wifiDevices, "rgba(0,255,0,ALPHA)");
+createRadar(document.getElementById("radar_dashboard"), btDevices, "rgba(0,255,255,ALPHA)");
+
+// WiFi tab radar
+createRadar(document.getElementById("radar_wifi"), wifiDevices, "rgba(0,255,0,ALPHA)", document.getElementById("wifi_current_list"));
+
+// Bluetooth tab radar
+createRadar(document.getElementById("radar_bt"), btDevices, "rgba(0,255,255,ALPHA)", document.getElementById("bt_current_list"));
 </script>
 
 <footer class="footer">
