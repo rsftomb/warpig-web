@@ -3,8 +3,7 @@
 A lightweight, real-time **embedded web dashboard** for the **WarPi.G** wardriving platform, designed for Raspberry Pi (Zero 2W and up).
 
 Built with **plain HTML, CSS, and JavaScript** — no frameworks, no bloat, no cloud dependencies.
-
----
+_______________________________________________________________________________________
 
 ## ✨ Features
 
@@ -24,8 +23,7 @@ Built with **plain HTML, CSS, and JavaScript** — no frameworks, no bloat, no c
 - 🧭 Tab-based UI (Dashboard / WiFi / Bluetooth)
 - 🟢 Hacker-style green-on-black terminal aesthetic
 - ⚡ Designed for low-power embedded devices
-
----
+_______________________________________________________________________________________
 
 ## 🖥️ Target Platform
 
@@ -37,8 +35,7 @@ Optimized for:
 - HDMI displays
 - Small LCD/OLED screens
 - Headless / local-network access
-
----
+_______________________________________________________________________________________
 
 ## 🧱 Tech Stack
 
@@ -50,3 +47,28 @@ Optimized for:
 - **Backend (external, not included):**  
   - JSON status endpoint (`/status`)
   - Expected to run on the Pi (Python, Go, etc.)
+_______________________________________________________________________________________
+
+⚠️ Legal Notice
+This software is intended for legal monitoring and research only.
+You are responsible for complying with all applicable local, state, and federal laws regarding wireless monitoring and data collection.
+Use at your own risk.
+_______________________________________________________________________________________
+
+🛠️ Roadmap (Planned)
+OLED-specific layout mode
+Optional SVG animation / status indicators
+Dark/light theme toggle
+Configurable endpoint URL
+Auth-gated admin mode
+_______________________________________________________________________________________
+
+📜 License
+This project is released under the MIT License.
+Free to use, modify, and distribute.
+_______________________________________________________________________________________
+
+🐗 WarPi.G
+Built for embedded systems.
+Built for the field.
+Built to stay offline.
