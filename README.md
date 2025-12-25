@@ -44,7 +44,7 @@ ________________________________________________________________________________
   - CSS3 (no external libraries)  
   - Vanilla JavaScript  
 
-- **Backend (external, not included):**  
+- **Backend (install and setup WarPi.G first):**  
   - JSON status endpoint (`/status`)
   - Expected to run on the Pi (Python, Go, etc.)
 _______________________________________________________________________________________
