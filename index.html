@@ -11,7 +11,7 @@
       color: #0f0;
       font-family: monospace;
       margin: 0;
-      padding-top: 100px;
+      padding-top: 110px;
       padding-bottom: 60px;
       display: flex;
       flex-direction: column;
@@ -29,6 +29,14 @@
       text-align: center;
       padding: 6px 0;
       z-index: 10;
+    }
+
+    .logo {
+      height: 40px;
+      width: auto;
+      display: block;
+      margin: 4px auto 2px;
+      filter: drop-shadow(0 0 4px #0f0);
     }
 
     .subtitle {
@@ -94,6 +102,7 @@
       padding-left: 8px;
       border-left: 1px solid #0f0;
       font-size: 12px;
+      white-space: pre-line;
     }
 
     .sublist::-webkit-scrollbar {
@@ -135,6 +144,8 @@
 <body>
 
 <header class="header">
+  <img src="logo.svg" class="logo" alt="WarPi.G Logo">
+
   🐗 WarPi.G WebUI
   <div class="subtitle">Wardriving Dashboard</div>
 
@@ -185,7 +196,6 @@
 function showTab(id) {
   document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-
   document.getElementById(id).classList.add('active');
   event.target.classList.add('active');
 }
