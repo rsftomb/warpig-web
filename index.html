@@ -37,7 +37,11 @@
       filter: drop-shadow(0 0 4px #0f0);
     }
 
-    .subtitle { font-size: 11px; color: #0a0; font-style: italic; }
+    .subtitle {
+      font-size: 11px;
+      color: #0a0;
+      font-style: italic;
+    }
 
     .tabs {
       display: flex;
@@ -65,6 +69,7 @@
       gap: 8px;
       align-items: center;
     }
+
     .content.active { display: flex; }
 
     .item {
@@ -85,6 +90,11 @@
       width: 100%;
     }
 
+    /* ONLY CHANGE: Info tab is taller */
+    #info .sublist {
+      max-height: min(45vh, 380px);
+    }
+
     .sublist::-webkit-scrollbar { width: 6px; }
     .sublist::-webkit-scrollbar-thumb { background: #0a0; border-radius: 3px; }
 
@@ -102,18 +112,24 @@
       text-align: center;
     }
 
-    .disclaimer { display: block; font-size: 10px; color: #0a0; font-style: italic; }
+    .disclaimer {
+      display: block;
+      font-size: 10px;
+      color: #0a0;
+      font-style: italic;
+    }
 
     canvas.radar {
       background: #000;
       border: 1px solid #0f0;
       border-radius: 50%;
-      margin:16px 0;
+      margin: 16px 0;
     }
   </style>
 </head>
 
 <body>
+
 <header class="header">
   <img src="logo.svg" class="logo" alt="WarPi.G Logo">
   🐗 WarPi.G WebUI
@@ -136,12 +152,7 @@
   <div class="item">Uptime: <span id="uptime">-</span></div>
 
   <div class="item">
-    <span>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="#0f0">
-        <path d="M9 2H15V4H18V6H20V8H22V16H20V18H18V20H15V22H9V20H6V18H4V16H2V8H4V6H6V4H9V2ZM10 10H14V14H10V10Z"/>
-      </svg>
-      CPU
-    </span>
+    <span>CPU</span>
     <span id="cpu">-</span>%
   </div>
 
@@ -175,7 +186,7 @@
   <div class="sublist">
 ### **📓WarPi.G – Patch Notes**
 ### **Initial Release (Boar# 1225.01 Tusk)**
-_______________________________________________________________________________________
+_________________________________________________________________
 
 ## **Features**
 - Wi-Fi and Bluetooth scanning with live telemetry
@@ -194,7 +205,6 @@ ________________________________________________________________________________
 - Scrollable live device lists
 - Consistent icon + metric layout
 - 1-second real-time refresh
-
   </div>
 </div>
 
@@ -228,7 +238,6 @@ async function updateTelemetry() {
     const r = await fetch("http://192.168.0.125:8081/status");
     const d = await r.json();
 
-    // Dashboard
     version.textContent = d.version ?? '-';
     ip.textContent = d.ip ?? '-';
     uptime.textContent = d.uptime ?? '-';
@@ -236,15 +245,13 @@ async function updateTelemetry() {
     wifi_now.textContent = d.wifi_now ?? '-';
     bt_now.textContent = d.bt_now ?? '-';
 
-    // WiFi
-    if(document.getElementById("wifi_now_w")) document.getElementById("wifi_now_w").textContent = d.wifi_now ?? '-';
-    if(document.getElementById("wifi_total")) document.getElementById("wifi_total").textContent = d.wifi_total ?? '-';
-    if(document.getElementById("wifi_list")) document.getElementById("wifi_list").textContent = d.wifi_seen?.length ? d.wifi_seen.join("\n") : "-";
+    wifi_now_w.textContent = d.wifi_now ?? '-';
+    wifi_total.textContent = d.wifi_total ?? '-';
+    wifi_list.textContent = d.wifi_seen?.length ? d.wifi_seen.join("\n") : "-";
 
-    // Bluetooth
-    if(document.getElementById("bt_now_b")) document.getElementById("bt_now_b").textContent = d.bt_now ?? '-';
-    if(document.getElementById("bt_total")) document.getElementById("bt_total").textContent = d.bt_total ?? '-';
-    if(document.getElementById("bt_list")) document.getElementById("bt_list").textContent = d.bt_seen?.length ? d.bt_seen.join("\n") : "-";
+    bt_now_b.textContent = d.bt_now ?? '-';
+    bt_total.textContent = d.bt_total ?? '-';
+    bt_list.textContent = d.bt_seen?.length ? d.bt_seen.join("\n") : "-";
 
     populateDevices(d.wifi_seen, d.bt_seen);
   } catch(e){ console.error(e); }
@@ -265,7 +272,7 @@ function createRadar(canvas, devices, blipColor, currentListElem){
   function draw(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
 
-    ctx.strokeStyle="#0f0"; ctx.lineWidth=1;
+    ctx.strokeStyle="#0f0";
     for(let i=1;i<=3;i++){
       ctx.beginPath();
       ctx.arc(canvas.width/2, canvas.height/2, (radius/3)*i, 0, 2*Math.PI);
@@ -277,7 +284,7 @@ function createRadar(canvas, devices, blipColor, currentListElem){
     ctx.moveTo(0,canvas.height/2); ctx.lineTo(canvas.width,canvas.height/2);
     ctx.stroke();
 
-    ctx.strokeStyle="rgba(0,255,0,0.6)"; ctx.lineWidth=2;
+    ctx.strokeStyle="rgba(0,255,0,0.6)";
     ctx.beginPath();
     ctx.moveTo(canvas.width/2,canvas.height/2);
     ctx.lineTo(canvas.width/2 + radius*Math.cos(sweep), canvas.height/2 + radius*Math.sin(sweep));
@@ -292,15 +299,18 @@ function createRadar(canvas, devices, blipColor, currentListElem){
       if(d.alpha>0){
         ctx.fillStyle = blipColor.replace('ALPHA', d.alpha);
         ctx.beginPath();
-        ctx.arc(canvas.width/2 + d.radius*radius*Math.cos(d.angle),
-                canvas.height/2 + d.radius*radius*Math.sin(d.angle),
-                3,0,2*Math.PI);
+        ctx.arc(
+          canvas.width/2 + d.radius*radius*Math.cos(d.angle),
+          canvas.height/2 + d.radius*radius*Math.sin(d.angle),
+          3,0,2*Math.PI
+        );
         ctx.fill();
         d.alpha = Math.max(d.alpha-0.01,0);
       }
     });
 
-    if(currentListElem) currentListElem.textContent = sweepCurrentDevices.length ? sweepCurrentDevices.join("\n") : "-";
+    if(currentListElem)
+      currentListElem.textContent = sweepCurrentDevices.length ? sweepCurrentDevices.join("\n") : "-";
 
     sweep += speed;
     sweepProgress += speed;
@@ -316,17 +326,16 @@ function createRadar(canvas, devices, blipColor, currentListElem){
   draw();
 }
 
-createRadar(document.getElementById("radar_dashboard"), wifiDevices, "rgba(0,255,0,ALPHA)");
-createRadar(document.getElementById("radar_dashboard"), btDevices, "rgba(0,255,255,ALPHA)");
-createRadar(document.getElementById("radar_wifi"), wifiDevices, "rgba(0,255,0,ALPHA)", document.getElementById("wifi_current_list"));
-createRadar(document.getElementById("radar_bt"), btDevices, "rgba(0,255,255,ALPHA)", document.getElementById("bt_current_list"));
+createRadar(radar_dashboard, wifiDevices, "rgba(0,255,0,ALPHA)");
+createRadar(radar_dashboard, btDevices, "rgba(0,255,255,ALPHA)");
+createRadar(radar_wifi, wifiDevices, "rgba(0,255,0,ALPHA)", wifi_current_list);
+createRadar(radar_bt, btDevices, "rgba(0,255,255,ALPHA)", bt_current_list);
 </script>
 
 <footer class="footer">
-  &copy; 2025 WarPi.G 
+  © 2025 WarPi.G
   <span class="disclaimer">Legal monitoring only. Use at your own risk.</span>
 </footer>
 
 </body>
 </html>
-
