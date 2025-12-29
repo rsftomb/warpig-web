@@ -1,6 +1,6 @@
 # 🐗 WarPi.G WebUI
 
-A lightweight, real-time **embedded web dashboard** for the **WarPi.G** wardriving platform, designed for Raspberry Pi (Zero 2W and up).
+A lightweight, real-time **embedded web dashboard** for [WarPi.G Zero2W](https://github.com/rsftomb/warpig) wardriving app, designed for Raspberry Pi (Zero 2W and up).
 
 Built with **plain HTML, CSS, and JavaScript** — no frameworks, no bloat, no cloud dependencies.
 _______________________________________________________________________________________
