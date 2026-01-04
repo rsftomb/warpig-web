@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>🐗 WarPi.G Tusk WebUI</title>
+  <title>🐗 WarPi.G WebUI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -132,7 +132,7 @@
 
 <header class="header">
   <img src="logo.svg" class="logo" alt="WarPi.G Logo">
-  🐗 WarPi.G Tusk WebUI
+  🐗 WarPi.G WebUI
   <div class="subtitle">Boar#: 010226.01 Tusk</div>
 
   <div class="tabs">
@@ -224,6 +224,7 @@ function showTab(id) {
   event.target.classList.add('active');
 }
 
+// ===== Telemetry =====
 let wifiDevices = [];
 let btDevices = [];
 
@@ -249,6 +250,8 @@ async function updateTelemetry() {
     ip.textContent = d.ip ?? '-';
     uptime.textContent = d.uptime ?? '-';
     cpu.textContent = d.cpu ?? '-';
+    temp.textContent = d.temp ?? '-';
+
     wifi_now.textContent = d.wifi_now ?? '-';
     bt_now.textContent = d.bt_now ?? '-';
 
@@ -267,6 +270,7 @@ async function updateTelemetry() {
 setInterval(updateTelemetry, 1000);
 updateTelemetry();
 
+// ===== Radar =====
 function createRadar(canvas, devices, blipColor, currentListElem){
   const ctx = canvas.getContext("2d");
   const radius = canvas.width/2 - 10;
@@ -339,10 +343,9 @@ createRadar(radar_bt, btDevices, "rgba(0,255,255,ALPHA)", bt_current_list);
 </script>
 
 <footer class="footer">
-  © 2025 WarPi.G
-  <span class="disclaimer">Legal monitoring only. Use at your own risk.</span>
+  © 2025-2026 WarPi.G
+  <span class="disclaimer">For legal use only. Use at your own risk.</span>
 </footer>
 
 </body>
 </html>
-
