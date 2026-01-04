@@ -11,7 +11,7 @@
       color: #0f0;
       font-family: monospace;
       margin: 0;
-      padding-top: 110px;
+      padding-top: 130px;
       padding-bottom: 60px;
       display: flex;
       flex-direction: column;
@@ -68,6 +68,7 @@
       flex-direction: column;
       gap: 8px;
       align-items: center;
+      margin-top: 20px;
     }
 
     .content.active { display: flex; }
@@ -90,7 +91,6 @@
       width: 100%;
     }
 
-    /* ONLY CHANGE: Info tab is taller */
     #info .sublist {
       max-height: min(45vh, 380px);
     }
@@ -123,7 +123,7 @@
       background: #000;
       border: 1px solid #0f0;
       border-radius: 50%;
-      margin: 16px 0;
+      margin: 24px 0 16px;
     }
   </style>
 </head>
@@ -143,7 +143,6 @@
   </div>
 </header>
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="content active">
   <canvas id="radar_dashboard" class="radar" width="200" height="200"></canvas>
 
@@ -161,7 +160,6 @@
   <div class="item">Bluetooth (current): <span id="bt_now">-</span></div>
 </div>
 
-<!-- WIFI -->
 <div id="wifi" class="content">
   <canvas id="radar_wifi" class="radar" width="200" height="200"></canvas>
   <div class="item">WiFi (current): <span id="wifi_now_w">-</span></div>
@@ -170,7 +168,6 @@
   <div class="sublist" id="wifi_list">All seen: -</div>
 </div>
 
-<!-- BLUETOOTH -->
 <div id="bluetooth" class="content">
   <canvas id="radar_bt" class="radar" width="200" height="200"></canvas>
   <div class="item">Bluetooth (current): <span id="bt_now_b">-</span></div>
@@ -179,14 +176,16 @@
   <div class="sublist" id="bt_list">All seen: -</div>
 </div>
 
-<!-- INFO -->
 <div id="info" class="content">
   <hr>
   <div class="item"><strong>Patch Notes</strong></div>
   <div class="sublist">
 ### **📓WarPi.G – Patch Notes**
-### **Initial Release (Boar# 1225.01 Tusk)**
 _________________________________________________________________
+### **Boar# 010226.01 Tusk**
+- Minor UI tweaks and optimizations
+_________________________________________________________________
+### **Initial Release (Boar# 1225.01 Tusk)**
 
 ## **Features**
 - Wi-Fi and Bluetooth scanning with live telemetry
@@ -216,7 +215,6 @@ function showTab(id) {
   event.target.classList.add('active');
 }
 
-// ===== Telemetry =====
 let wifiDevices = [];
 let btDevices = [];
 
@@ -254,13 +252,12 @@ async function updateTelemetry() {
     bt_list.textContent = d.bt_seen?.length ? d.bt_seen.join("\n") : "-";
 
     populateDevices(d.wifi_seen, d.bt_seen);
-  } catch(e){ console.error(e); }
+  } catch(e){}
 }
 
 setInterval(updateTelemetry, 1000);
 updateTelemetry();
 
-// ===== Radar =====
 function createRadar(canvas, devices, blipColor, currentListElem){
   const ctx = canvas.getContext("2d");
   const radius = canvas.width/2 - 10;
