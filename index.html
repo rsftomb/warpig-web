@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>🐗 WarPi.G WebUI</title>
+  <title>🐗 WarPi.G Tusk WebUI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -132,8 +132,8 @@
 
 <header class="header">
   <img src="logo.svg" class="logo" alt="WarPi.G Logo">
-  🐗 WarPi.G WebUI
-  <div class="subtitle">Boar#: 1225.01 Tusk</div>
+  🐗 WarPi.G Tusk WebUI
+  <div class="subtitle">Boar#: 010226.01 Tusk</div>
 
   <div class="tabs">
     <div class="tab active" onclick="showTab('dashboard')">Dashboard</div>
@@ -143,6 +143,7 @@
   </div>
 </header>
 
+<!-- DASHBOARD -->
 <div id="dashboard" class="content active">
   <canvas id="radar_dashboard" class="radar" width="200" height="200"></canvas>
 
@@ -152,7 +153,12 @@
 
   <div class="item">
     <span>CPU</span>
-    <span id="cpu">-</span>%
+    <span><span id="cpu">-</span>%</span>
+  </div>
+
+  <div class="item">
+    <span>Temp</span>
+    <span id="temp">-</span>
   </div>
 
   <hr>
@@ -160,6 +166,7 @@
   <div class="item">Bluetooth (current): <span id="bt_now">-</span></div>
 </div>
 
+<!-- WIFI -->
 <div id="wifi" class="content">
   <canvas id="radar_wifi" class="radar" width="200" height="200"></canvas>
   <div class="item">WiFi (current): <span id="wifi_now_w">-</span></div>
@@ -168,6 +175,7 @@
   <div class="sublist" id="wifi_list">All seen: -</div>
 </div>
 
+<!-- BLUETOOTH -->
 <div id="bluetooth" class="content">
   <canvas id="radar_bt" class="radar" width="200" height="200"></canvas>
   <div class="item">Bluetooth (current): <span id="bt_now_b">-</span></div>
@@ -176,6 +184,7 @@
   <div class="sublist" id="bt_list">All seen: -</div>
 </div>
 
+<!-- INFO -->
 <div id="info" class="content">
   <hr>
   <div class="item"><strong>Patch Notes</strong></div>
@@ -336,3 +345,4 @@ createRadar(radar_bt, btDevices, "rgba(0,255,255,ALPHA)", bt_current_list);
 
 </body>
 </html>
+
