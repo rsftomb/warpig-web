@@ -1,13 +1,13 @@
 ### **📓WarPi.G – Patch Notes**
 _________________________________________________________________
 
-### **Boar# 0126.05 Tusk**
+### **Boar# 0126.05 [Tusk]**
 - Minor UI tweaks and optimizations
 - Added auto-lock timer in Settings (default 5 minutes)
 - Added persistent login session (remembers user until logout)
 _________________________________________________________________
 
-### **Initial Release (Boar# 1225.25 Tusk)**
+### **Boar# 1225.25 Tusk** (Initial Release)
 ## **Features**
 - Wi-Fi and Bluetooth scanning with live telemetry
 - Animated radar visualization with sweep-based detection
