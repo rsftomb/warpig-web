@@ -1,134 +1,173 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>🐗 WarPi.G WebUI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>🐗 WarPi.G WebUI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  background: #000;
+  color: #0f0;
+  font-family: monospace;
+  margin: 0;
+  padding-top: 130px;
+  padding-bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  <style>
-    body {
-      background: #000;
-      color: #0f0;
-      font-family: monospace;
-      margin: 0;
-      padding-top: 130px;
-      padding-bottom: 60px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+header.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #000;
+  border-bottom: 1px solid #0f0;
+  text-align: center;
+  padding: 6px 0;
+  z-index: 10;
+}
 
-    header.header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background: #000;
-      border-bottom: 1px solid #0f0;
-      text-align: center;
-      padding: 6px 0;
-      z-index: 10;
-    }
+.logo {
+  height: 40px;
+  display: block;
+  margin: 4px auto 2px;
+  filter: drop-shadow(0 0 4px #0f0);
+}
 
-    .logo {
-      height: 40px;
-      display: block;
-      margin: 4px auto 2px;
-      filter: drop-shadow(0 0 4px #0f0);
-    }
+.subtitle {
+  font-size: 11px;
+  color: #0a0;
+  font-style: italic;
+}
 
-    .subtitle {
-      font-size: 11px;
-      color: #0a0;
-      font-style: italic;
-    }
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 8px;
+  border-top: 1px solid #0f0;
+}
 
-    .tabs {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 8px;
-      border-top: 1px solid #0f0;
-    }
+.tab {
+  flex: 1;
+  padding: 8px 0;
+  cursor: pointer;
+  border-right: 1px solid #0f0;
+  font-size: 13px;
+}
 
-    .tab {
-      flex: 1;
-      padding: 8px 0;
-      cursor: pointer;
-      border-right: 1px solid #0f0;
-      font-size: 13px;
-    }
+.tab:last-child { border-right: none; }
+.tab.active { background: #0f0; color: #000; font-weight: bold; }
 
-    .tab:last-child { border-right: none; }
-    .tab.active { background: #0f0; color: #000; font-weight: bold; }
+.content {
+  width: 90%;
+  max-width: 420px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  margin-top: 20px;
+}
 
-    .content {
-      width: 90%;
-      max-width: 420px;
-      display: none;
-      flex-direction: column;
-      gap: 8px;
-      align-items: center;
-      margin-top: 20px;
-    }
+.content.active { display: flex; }
 
-    .content.active { display: flex; }
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  width: 100%;
+}
 
-    .item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 14px;
-      width: 100%;
-    }
+.sublist {
+  max-height: 120px;
+  overflow-y: auto;
+  padding-left: 8px;
+  border-left: 1px solid #0f0;
+  font-size: 12px;
+  white-space: pre-line;
+  width: 100%;
+}
 
-    .sublist {
-      max-height: 120px;
-      overflow-y: auto;
-      padding-left: 8px;
-      border-left: 1px solid #0f0;
-      font-size: 12px;
-      white-space: pre-line;
-      width: 100%;
-    }
+#info .sublist {
+  max-height: min(45vh, 380px);
+}
 
-    #info .sublist {
-      max-height: min(45vh, 380px);
-    }
+.sublist::-webkit-scrollbar { width: 6px; }
+.sublist::-webkit-scrollbar-thumb { background: #0a0; border-radius: 3px; }
 
-    .sublist::-webkit-scrollbar { width: 6px; }
-    .sublist::-webkit-scrollbar-thumb { background: #0a0; border-radius: 3px; }
+hr { border: 0; border-top: 1px solid #0f0; width: 100%; }
 
-    hr { border: 0; border-top: 1px solid #0f0; width: 100%; }
+footer.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 6px 0;
+  background: #000;
+  border-top: 1px solid #0f0;
+  font-size: 11px;
+  text-align: center;
+}
 
-    footer.footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      padding: 6px 0;
-      background: #000;
-      border-top: 1px solid #0f0;
-      font-size: 11px;
-      text-align: center;
-    }
+.disclaimer {
+  display: block;
+  font-size: 10px;
+  color: #0a0;
+  font-style: italic;
+}
 
-    .disclaimer {
-      display: block;
-      font-size: 10px;
-      color: #0a0;
-      font-style: italic;
-    }
+canvas.radar {
+  background: #000;
+  border: 1px solid #0f0;
+  border-radius: 50%;
+  margin: 24px 0 16px;
+}
 
-    canvas.radar {
-      background: #000;
-      border: 1px solid #0f0;
-      border-radius: 50%;
-      margin: 24px 0 16px;
-    }
-  </style>
+/* LOGIN PAGE STYLES */
+#loginPage {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 80px;
+}
+
+#loginPage img.logo {
+  height: 80px; /* bigger for login */
+}
+
+#loginPage select, #loginPage input[type=password] {
+  background: #000;
+  color: #0f0;
+  border: 1px solid #0f0;
+  padding: 4px 6px;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+#loginPage button {
+  background: #0f0;
+  color: #000;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+</style>
 </head>
-
 <body>
+
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+  <img src="logo.svg" class="logo" alt="WarPi.G Logo">
+  <select id="usernameSelect">
+    <option value="jleary53">jleary53</option>
+    <option value="Admin">Admin</option>
+  </select>
+  <input type="password" id="passwordField" placeholder="Encrypted">
+  <button onclick="attemptLogin()">Login</button>
+</div>
 
 <header class="header">
   <img src="logo.svg" class="logo" alt="WarPi.G Logo">
@@ -140,27 +179,18 @@
     <div class="tab" onclick="showTab('wifi')">WiFi</div>
     <div class="tab" onclick="showTab('bluetooth')">Bluetooth</div>
     <div class="tab" onclick="showTab('info')">Info</div>
+    <div class="tab" onclick="showTab('settings')">Settings</div>
   </div>
 </header>
 
 <!-- DASHBOARD -->
 <div id="dashboard" class="content active">
   <canvas id="radar_dashboard" class="radar" width="200" height="200"></canvas>
-
   <div class="item">Boar#: <span id="version">-</span></div>
   <div class="item">IP: <span id="ip">-</span></div>
   <div class="item">Uptime: <span id="uptime">-</span></div>
-
-  <div class="item">
-    <span>CPU</span>
-    <span><span id="cpu">-</span>%</span>
-  </div>
-
-  <div class="item">
-    <span>Temp</span>
-    <span id="temp">-</span>
-  </div>
-
+  <div class="item"><span>CPU</span><span><span id="cpu">-</span>%</span></div>
+  <div class="item"><span>Temp</span><span id="temp">-</span></div>
   <hr>
   <div class="item">WiFi (current): <span id="wifi_now">-</span></div>
   <div class="item">Bluetooth (current): <span id="bt_now">-</span></div>
@@ -191,23 +221,22 @@
   <div class="sublist">
 ### **📓WarPi.G – Patch Notes**
 _________________________________________________________________
-### **Boar# 010226.01 Tusk**
+### **Boar# 0126.05 Tusk**
 - Minor UI tweaks and optimizations
+- Added auto-lock timer in Settings (default 5 minutes)
+- Added persistent login session (remembers user until logout)
 _________________________________________________________________
-### **Initial Release (Boar# 1225.01 Tusk)**
-
+### **Initial Release (Boar# 1225.25 Tusk)**
 ## **Features**
 - Wi-Fi and Bluetooth scanning with live telemetry
 - Animated radar visualization with sweep-based detection
 - Signal-strength–based positioning and blip aging
 - Real-time counts for current and total devices
 - Mobile-friendly WebUI with Dashboard, Wi-Fi, and Bluetooth tabs
-
 ## **System & Stability**
 - Reliable startup via systemd with boot-time safeguards
 - Stable background scanning and safe restarts
 - SD card health and read-only filesystem detection
-
 ## **UI & UX**
 - Green-on-black OLED/WebUI aesthetic
 - Scrollable live device lists
@@ -216,15 +245,98 @@ _________________________________________________________________
   </div>
 </div>
 
+<!-- SETTINGS -->
+<div id="settings" class="content">
+  <div class="item"><strong>Auto-Lock Timer</strong></div>
+  <div class="item">
+    <label for="autoLockSelect">Lock after: </label>
+    <select id="autoLockSelect" onchange="updateAutoLock()">
+      <option value="1">1 Minute</option>
+      <option value="5">5 Minutes</option>
+      <option value="10">10 Minutes</option>
+      <option value="15">15 Minutes</option>
+    </select>
+  </div>
+  <div class="item"><small>Timer resets on page reload or login.</small></div>
+  <div class="item">
+    <button onclick="logout()" style="background:#0f0;color:#000;border:none;padding:6px 12px;cursor:pointer;">Logout</button>
+  </div>
+</div>
+
 <script>
+// ===== GLOBAL SESSION & AUTO-LOGOUT =====
+const SESSION_KEY = "WarPiGSession";
+const AUTO_LOCK_KEY = "WarPiGAutoLock";
+let autoLockMinutes = parseInt(localStorage.getItem(AUTO_LOCK_KEY)) || 5;
+let logoutTimer;
+
+// ===== LOGOUT FUNCTION =====
+function logout() {
+  localStorage.removeItem(SESSION_KEY);
+  clearTimeout(logoutTimer);
+  showLogin();
+}
+
+// ===== LOGIN & SESSION =====
+function showLogin() {
+  document.getElementById("loginPage").style.display = "flex";
+  document.querySelector("header").style.display = "none";
+  document.querySelectorAll(".content").forEach(c => c.style.display = "none");
+}
+
+function attemptLogin() {
+  const username = document.getElementById("usernameSelect").value;
+  const password = document.getElementById("passwordField").value;
+
+  if((username==="jleary53" && password==="5317") || (username==="Admin" && password==="9999")){
+    localStorage.setItem(SESSION_KEY, username);
+    initializeUI();
+  } else {
+    alert("Invalid credentials!");
+  }
+}
+
+function initializeUI() {
+  document.getElementById("loginPage").style.display = "none";
+  document.querySelector("header").style.display = "block";
+  showTab('dashboard');
+  resetLogoutTimer();
+  forcePostLoginRefresh();
+}
+
+function resetLogoutTimer() {
+  if(logoutTimer) clearTimeout(logoutTimer);
+  logoutTimer = setTimeout(() => {
+    alert("Session expired. Logging out.");
+    logout();
+  }, autoLockMinutes * 60 * 1000);
+}
+
+function updateAutoLock() {
+  const select = document.getElementById("autoLockSelect");
+  autoLockMinutes = parseInt(select.value);
+  localStorage.setItem(AUTO_LOCK_KEY, autoLockMinutes);
+  resetLogoutTimer();
+}
+
+// check for persistent session
+if(localStorage.getItem(SESSION_KEY)){
+  initializeUI();
+} else {
+  showLogin();
+}
+
+// ===== TAB NAV =====
 function showTab(id) {
   document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  const tab = document.querySelector(".tab[onclick*='"+id+"']");
+  if(tab) tab.classList.add("active");
   document.getElementById(id).classList.add('active');
-  event.target.classList.add('active');
+  resetLogoutTimer();
 }
 
-// ===== Telemetry =====
+// ===== TELEMETRY & RADAR =====
 let wifiDevices = [];
 let btDevices = [];
 
@@ -267,10 +379,15 @@ async function updateTelemetry() {
   } catch(e){}
 }
 
+function forcePostLoginRefresh(){
+  updateTelemetry();
+  setTimeout(updateTelemetry, 200);
+  setTimeout(updateTelemetry, 500);
+}
+
 setInterval(updateTelemetry, 1000);
 updateTelemetry();
 
-// ===== Radar =====
 function createRadar(canvas, devices, blipColor, currentListElem){
   const ctx = canvas.getContext("2d");
   const radius = canvas.width/2 - 10;
@@ -346,6 +463,5 @@ createRadar(radar_bt, btDevices, "rgba(0,255,255,ALPHA)", bt_current_list);
   © 2025-2026 WarPi.G
   <span class="disclaimer">For legal use only. Use at your own risk.</span>
 </footer>
-
 </body>
 </html>
