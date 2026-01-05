@@ -7,7 +7,7 @@ _________________________________________________________________
 - Added persistent login session (remembers user until logout)
 _________________________________________________________________
 
-### **Boar# 1225.25 Tusk** (Initial Release)
+### **Boar# 1225.25 [Tusk]** (Initial Release)
 ## **Features**
 - Wi-Fi and Bluetooth scanning with live telemetry
 - Animated radar visualization with sweep-based detection
