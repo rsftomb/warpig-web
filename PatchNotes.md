@@ -1,10 +1,12 @@
 ### **📓WarPi.G – Patch Notes**
 _________________________________________________________________
 
-### **Boar# 0126.05 [Tusk]**
+### **Boar# 0126.06 [Tusk]**
 - Minor UI tweaks and optimizations
 - Added auto-lock timer in Settings (default 5 minutes)
 - Added persistent login session (remembers user until logout)
+- Added minor graphics changes
+- Added GPS Tab
 _________________________________________________________________
 
 ### **Boar# 1225.25 [Tusk]** (Initial Release)
