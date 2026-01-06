@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>🐗 WarPi.G WebUI</title>
+<title>WarPi.G WebUI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body {
@@ -135,7 +135,7 @@ canvas.radar {
 }
 
 #loginPage img.logo {
-  height: 80px; /* bigger for login */
+  height: 80px;
 }
 
 #loginPage select, #loginPage input[type=password] {
@@ -154,9 +154,29 @@ canvas.radar {
   padding: 6px 12px;
   cursor: pointer;
 }
+
+/* TOAST */
+#toast {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000;
+  border: 1px solid #0f0;
+  color: #0f0;
+  padding: 6px 12px;
+  font-family: monospace;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 9999;
+}
 </style>
 </head>
 <body>
+
+<div id="toast"></div>
 
 <!-- LOGIN PAGE -->
 <div id="loginPage">
@@ -165,56 +185,69 @@ canvas.radar {
     <option value="jleary53">jleary53</option>
     <option value="Admin">Admin</option>
   </select>
-  <input type="password" id="passwordField" placeholder="Encrypted">
+  <input type="password" id="passwordField" placeholder="Password">
   <button onclick="attemptLogin()">Login</button>
 </div>
 
 <header class="header">
   <img src="logo.svg" class="logo" alt="WarPi.G Logo">
-  🐗 WarPi.G WebUI
+  WarPi.G WebUI
   <div class="subtitle">Boar#: 010226.01 Tusk</div>
 
   <div class="tabs">
-    <div class="tab active" onclick="showTab('dashboard')">Dashboard</div>
-    <div class="tab" onclick="showTab('wifi')">WiFi</div>
-    <div class="tab" onclick="showTab('bluetooth')">Bluetooth</div>
-    <div class="tab" onclick="showTab('info')">Info</div>
-    <div class="tab" onclick="showTab('settings')">Settings</div>
+    <div class="tab active" onclick="showTab('dashboard')">🖥️ Dashboard</div>
+    <div class="tab" onclick="showTab('wifi')">📶 WiFi</div>
+    <div class="tab" onclick="showTab('bluetooth')">📡 Bluetooth</div>
+    <div class="tab" onclick="showTab('gps')">📡GPS</div>
+    <div class="tab" onclick="showTab('info')">📝 Info</div>
+    <div class="tab" onclick="showTab('settings')">⚙️ Settings</div>
   </div>
 </header>
 
-<!-- DASHBOARD -->
 <div id="dashboard" class="content active">
   <canvas id="radar_dashboard" class="radar" width="200" height="200"></canvas>
-  <div class="item">Boar#: <span id="version">-</span></div>
-  <div class="item">IP: <span id="ip">-</span></div>
-  <div class="item">Uptime: <span id="uptime">-</span></div>
-  <div class="item"><span>CPU</span><span><span id="cpu">-</span>%</span></div>
-  <div class="item"><span>Temp</span><span id="temp">-</span></div>
   <hr>
-  <div class="item">WiFi (current): <span id="wifi_now">-</span></div>
-  <div class="item">Bluetooth (current): <span id="bt_now">-</span></div>
+  <div class="item">📝Boar#: <span id="version">-</span></div>
+  <div class="item">🌐IP: <span id="ip">-</span></div>
+  <div class="item">⏱️Uptime: <span id="uptime">-</span></div>
+  <div class="item"><span>⚙️CPU Load:</span><span><span id="cpu">-</span>%</span></div>
+  <div class="item"><span>🌡️CPU Temp: </span><span id="temp">-</span></div>
+  <hr>
+  <div class="item">📶WiFi (current): <span id="wifi_now">-</span></div>
+  <div class="item">📡Bluetooth (current): <span id="bt_now">-</span></div>
 </div>
 
-<!-- WIFI -->
 <div id="wifi" class="content">
   <canvas id="radar_wifi" class="radar" width="200" height="200"></canvas>
-  <div class="item">WiFi (current): <span id="wifi_now_w">-</span></div>
+  <hr>
+  <div class="item">📶WiFi (current): <span id="wifi_now_w">-</span></div>
   <div class="sublist" id="wifi_current_list">Currently seen: -</div>
-  <div class="item">WiFi (total): <span id="wifi_total">-</span></div>
+  <hr>
+  <div class="item">📶WiFi (total): <span id="wifi_total">-</span></div>
   <div class="sublist" id="wifi_list">All seen: -</div>
 </div>
 
-<!-- BLUETOOTH -->
 <div id="bluetooth" class="content">
   <canvas id="radar_bt" class="radar" width="200" height="200"></canvas>
-  <div class="item">Bluetooth (current): <span id="bt_now_b">-</span></div>
+  <hr>
+  <div class="item">📡Bluetooth (current): <span id="bt_now_b">-</span></div>
   <div class="sublist" id="bt_current_list">Currently seen: -</div>
-  <div class="item">Bluetooth (total): <span id="bt_total">-</span></div>
+  <hr>
+  <div class="item">📡Bluetooth (total): <span id="bt_total">-</span></div>
   <div class="sublist" id="bt_list">All seen: -</div>
 </div>
 
-<!-- INFO -->
+<div id="gps" class="content">
+  <hr>
+  <div class="item"><strong>GPS Settings</strong></div>
+  <div class="sublist">
+### **🛰️GPS Implementation Coming Soon**
+
+_________________________________________________________________
+
+  </div>
+</div>
+
 <div id="info" class="content">
   <hr>
   <div class="item"><strong>Patch Notes</strong></div>
@@ -233,19 +266,9 @@ _________________________________________________________________
 - Signal-strength–based positioning and blip aging
 - Real-time counts for current and total devices
 - Mobile-friendly WebUI with Dashboard, Wi-Fi, and Bluetooth tabs
-## **System & Stability**
-- Reliable startup via systemd with boot-time safeguards
-- Stable background scanning and safe restarts
-- SD card health and read-only filesystem detection
-## **UI & UX**
-- Green-on-black OLED/WebUI aesthetic
-- Scrollable live device lists
-- Consistent icon + metric layout
-- 1-second real-time refresh
   </div>
 </div>
 
-<!-- SETTINGS -->
 <div id="settings" class="content">
   <div class="item"><strong>Auto-Lock Timer</strong></div>
   <div class="item">
@@ -258,26 +281,33 @@ _________________________________________________________________
     </select>
   </div>
   <div class="item"><small>Timer resets on page reload or login.</small></div>
+  <hr>
   <div class="item">
     <button onclick="logout()" style="background:#0f0;color:#000;border:none;padding:6px 12px;cursor:pointer;">Logout</button>
   </div>
 </div>
 
 <script>
-// ===== GLOBAL SESSION & AUTO-LOGOUT =====
+document.addEventListener("DOMContentLoaded", () => {
+
 const SESSION_KEY = "WarPiGSession";
 const AUTO_LOCK_KEY = "WarPiGAutoLock";
 let autoLockMinutes = parseInt(localStorage.getItem(AUTO_LOCK_KEY)) || 5;
 let logoutTimer;
 
-// ===== LOGOUT FUNCTION =====
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.style.opacity = "1";
+  setTimeout(()=>t.style.opacity="0", 2000);
+}
+
 function logout() {
   localStorage.removeItem(SESSION_KEY);
   clearTimeout(logoutTimer);
   showLogin();
 }
 
-// ===== LOGIN & SESSION =====
 function showLogin() {
   document.getElementById("loginPage").style.display = "flex";
   document.querySelector("header").style.display = "none";
@@ -292,13 +322,15 @@ function attemptLogin() {
     localStorage.setItem(SESSION_KEY, username);
     initializeUI();
   } else {
-    alert("Invalid credentials!");
+    showToast("Invalid credentials");
   }
 }
 
 function initializeUI() {
   document.getElementById("loginPage").style.display = "none";
   document.querySelector("header").style.display = "block";
+  const sel = document.getElementById("autoLockSelect");
+  if(sel) sel.value = autoLockMinutes;
   showTab('dashboard');
   resetLogoutTimer();
   forcePostLoginRefresh();
@@ -307,9 +339,9 @@ function initializeUI() {
 function resetLogoutTimer() {
   if(logoutTimer) clearTimeout(logoutTimer);
   logoutTimer = setTimeout(() => {
-    alert("Session expired. Logging out.");
+    showToast("Session expired");
     logout();
-  }, autoLockMinutes * 60 * 1000);
+  }, autoLockMinutes * 60000);
 }
 
 function updateAutoLock() {
@@ -317,16 +349,15 @@ function updateAutoLock() {
   autoLockMinutes = parseInt(select.value);
   localStorage.setItem(AUTO_LOCK_KEY, autoLockMinutes);
   resetLogoutTimer();
+  showToast("Auto-lock saved");
 }
 
-// check for persistent session
 if(localStorage.getItem(SESSION_KEY)){
   initializeUI();
 } else {
   showLogin();
 }
 
-// ===== TAB NAV =====
 function showTab(id) {
   document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -336,7 +367,6 @@ function showTab(id) {
   resetLogoutTimer();
 }
 
-// ===== TELEMETRY & RADAR =====
 let wifiDevices = [];
 let btDevices = [];
 
@@ -358,25 +388,25 @@ async function updateTelemetry() {
     const r = await fetch("http://192.168.0.125:8081/status");
     const d = await r.json();
 
-    version.textContent = d.version ?? '-';
-    ip.textContent = d.ip ?? '-';
-    uptime.textContent = d.uptime ?? '-';
-    cpu.textContent = d.cpu ?? '-';
-    temp.textContent = d.temp ?? '-';
+    document.getElementById("version").textContent = d.version ?? '-';
+    document.getElementById("ip").textContent = d.ip ?? '-';
+    document.getElementById("uptime").textContent = d.uptime ?? '-';
+    document.getElementById("cpu").textContent = d.cpu ?? '-';
+    document.getElementById("temp").textContent = d.temp ?? '-';
 
-    wifi_now.textContent = d.wifi_now ?? '-';
-    bt_now.textContent = d.bt_now ?? '-';
+    document.getElementById("wifi_now").textContent = d.wifi_now ?? '-';
+    document.getElementById("bt_now").textContent = d.bt_now ?? '-';
 
-    wifi_now_w.textContent = d.wifi_now ?? '-';
-    wifi_total.textContent = d.wifi_total ?? '-';
-    wifi_list.textContent = d.wifi_seen?.length ? d.wifi_seen.join("\n") : "-";
+    document.getElementById("wifi_now_w").textContent = d.wifi_now ?? '-';
+    document.getElementById("wifi_total").textContent = d.wifi_total ?? '-';
+    document.getElementById("wifi_list").textContent = d.wifi_seen?.length ? d.wifi_seen.join("\n") : "-";
 
-    bt_now_b.textContent = d.bt_now ?? '-';
-    bt_total.textContent = d.bt_total ?? '-';
-    bt_list.textContent = d.bt_seen?.length ? d.bt_seen.join("\n") : "-";
+    document.getElementById("bt_now_b").textContent = d.bt_now ?? '-';
+    document.getElementById("bt_total").textContent = d.bt_total ?? '-';
+    document.getElementById("bt_list").textContent = d.bt_seen?.length ? d.bt_seen.join("\n") : "-";
 
     populateDevices(d.wifi_seen, d.bt_seen);
-  } catch(e){}
+  } catch(e){ console.error("Telemetry error:", e); }
 }
 
 function forcePostLoginRefresh(){
@@ -386,7 +416,6 @@ function forcePostLoginRefresh(){
 }
 
 setInterval(updateTelemetry, 1000);
-updateTelemetry();
 
 function createRadar(canvas, devices, blipColor, currentListElem){
   const ctx = canvas.getContext("2d");
@@ -457,11 +486,20 @@ createRadar(radar_dashboard, wifiDevices, "rgba(0,255,0,ALPHA)");
 createRadar(radar_dashboard, btDevices, "rgba(0,255,255,ALPHA)");
 createRadar(radar_wifi, wifiDevices, "rgba(0,255,0,ALPHA)", wifi_current_list);
 createRadar(radar_bt, btDevices, "rgba(0,255,255,ALPHA)", bt_current_list);
+
+// ======== FIX: expose functions globally ========
+window.attemptLogin = attemptLogin;
+window.logout = logout;
+window.showTab = showTab;
+window.updateAutoLock = updateAutoLock;
+
+});
 </script>
 
 <footer class="footer">
   © 2025-2026 WarPi.G
   <span class="disclaimer">For legal use only. Use at your own risk.</span>
 </footer>
+
 </body>
 </html>
